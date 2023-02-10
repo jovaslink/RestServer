@@ -4,7 +4,7 @@ const Categoria = require('../models/categoria');
 
 const categoriasById = async (req=request , res = response) => {
     const id = req.params.id;
-    const categoria= await Categoria.findById(id);
+    const categoria= await Categoria.findById(id).populate('usuario','nombre');
         
     res.json({
         categoria
@@ -26,6 +26,7 @@ const categoriasGet = async (req=request , res = response) => {
     const [total, categorias] = await Promise.all([
         await Categoria.countDocuments(query),
         await Categoria.find(query)
+        .populate('usuario','nombre')
         .skip(Number(desde))
         .limit(Number(limite))
     ]);
