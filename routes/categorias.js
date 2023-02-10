@@ -41,7 +41,7 @@ const router = Router();
     //Actualizar categoria - privado - cualquier persona con un token valido
     router.put('/:id',[
                         validarJWT, //validamos que envien un token valido
-                        validarVariosRoles('USER_ROLE'), //Protege la ruta con 1 o varios Roles que le asigemos desde la ruta
+                        validarVariosRoles('USER_ROLE','ADMIN_ROLE'), //Protege la ruta con 1 o varios Roles que le asigemos desde la ruta
                         check('id', 'No es un Id válido').isMongoId(),
                         check('id').custom(existeIdCategoria), //Revisamos si existe el id en las categorias
                         validarCampos //funcion middleware que verifica si hay errores en los campos, si todo OK llama a next()

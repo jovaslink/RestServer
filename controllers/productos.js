@@ -4,7 +4,9 @@ const Producto = require('../models/producto');
 
 const productosById = async (req=request , res = response) => {
     const id = req.params.id;
-    const producto= await Producto.findById(id);
+    const producto= await Producto.findById(id)
+                        .populate('usuario','nombre')
+                        .populate('categoria','nombre');;
         
     res.json({
         producto
@@ -26,6 +28,8 @@ const productosGet = async (req=request , res = response) => {
     const [total, productos] = await Promise.all([
         await Producto.countDocuments(query),
         await Producto.find(query)
+        .populate('usuario','nombre')
+        .populate('categoria','nombre')
         .skip(Number(desde))
         .limit(Number(limite))
     ]);
@@ -38,8 +42,16 @@ const productosGet = async (req=request , res = response) => {
 
 const productosPost = async (req=request , res = response) => {
 
-    const {nombre,descripcion,precio,id_categoria} = req.body;
-    const producto= new Productos({nombre,descripcion,precio,id_categoria});
+    const {...resto} = req.body;
+    const data = {
+        usuario: req.usuarioAuth._id,
+        ...resto, // abre el objeto
+    }
+
+    //console.log(data)
+    
+    
+    const producto= new Producto(data);
     
     //grabar en la base de datos
     await producto.save();
@@ -51,9 +63,17 @@ const productosPost = async (req=request , res = response) => {
 
 const productosPut = async (req=request , res = response) => {
     const id = req.params.id;
-    const {...resto} = req.body;
-
-    const producto = await Producto.findByIdAndUpdate(id , resto,{new: true});
+    const {estado,usuario, ...resto} = req.body;
+    
+    const data = {
+        usuario: req.usuarioAuth._id,
+        ...resto //abre el objeto
+    }
+    
+    
+    const producto = await Producto.findByIdAndUpdate(id , data ,{new: true})
+                    .populate('usuario','nombre')
+                    .populate('categoria','nombre');
 
     res.json({
         id,

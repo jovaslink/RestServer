@@ -67,9 +67,26 @@ const categoriasPost = async (req=request , res = response) => {
 
 const categoriasPut = async (req=request , res = response) => {
     const id = req.params.id;
-    const {...resto} = req.body;
+    const {usuario, estado, ...resto} = req.body;
+    const nombre = req.body.nombre.toUpperCase();
+    const categoriaDB = await Categoria.findOne({nombre});
+    
+    if(categoriaDB) {
+        return res.status(400).json({
+               msg: `Ya existe una categoría con el nombre de ${categoriaDB.nombre}`
+     });
 
-    const categoria = await Categoria.findByIdAndUpdate(id, resto,{new: true});
+    }
+
+    const data = {
+        nombre,
+        usuario: req.usuarioAuth._id,
+        ...resto
+    }
+
+
+
+    const categoria = await Categoria.findByIdAndUpdate(id, data,{new: true});
 
     res.json({
         id,

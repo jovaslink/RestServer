@@ -1,4 +1,5 @@
 const Categoria = require('../models/categoria');
+const Producto = require('../models/producto');
 const Role = require('../models/role');
 const Usuario = require('../models/usuario');
 
@@ -53,7 +54,7 @@ const existeIdCategoria= async (id) => {
 
 const existeIdProducto= async (id) => {
     
-    const existeId= await Categoria.findById(id);
+    const existeId= await Producto.findById(id);
     
     if(!existeId){
         throw new Error(`El Id ${id} no está registrado en la BD`);
